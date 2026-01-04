@@ -11,3 +11,13 @@ lime
 scikit-image
 matplotlib
 shap
+torch
+torchvision
+numpy
+pillow
+opencv-python
+lime
+shap
+scikit-image
+matplotlib
+yaml
