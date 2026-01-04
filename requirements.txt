@@ -1,0 +1,9 @@
+librosa
+numpy
+pandas
+matplotlib
+Pillow
+opencv-python
+numpy
+torch
+torchvision
