@@ -7,7 +7,7 @@ from PIL import Image
 
 RAW_AUDIO_DIR = "data/audio/raw"
 OUTPUT_DIR = "data/audio/spectrograms"
-
+#
 SAMPLE_RATE = 22050
 N_MELS = 128
 N_FFT = 2048
