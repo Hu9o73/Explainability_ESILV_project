@@ -29,14 +29,6 @@ from xai.shap import ShapExplainer, shap_to_heatmap, overlay_shap
 # Utils – Ground truth & confusion case
 # ==================================================
 def infer_ground_truth(filename: str, input_type: str):
-    """
-    Infer ground truth label from filename.
-
-    Returns:
-        0 = fake / no_disease
-        1 = real / disease
-        None = unknown
-    """
     name = filename.lower()
 
     if input_type == "audio":
@@ -52,6 +44,7 @@ def infer_ground_truth(filename: str, input_type: str):
             return 1
 
     return None
+
 
 def confusion_case(y_true, y_pred):
     if y_true is None:
@@ -85,8 +78,10 @@ if uploaded_file is None:
     st.info("Upload a file to start comparison.")
     st.stop()
 
+
 def detect_input_type(file):
     return "audio" if file.name.lower().endswith(".wav") else "image"
+
 
 input_type = detect_input_type(uploaded_file)
 st.sidebar.markdown(f"**Detected input type:** `{input_type}`")
@@ -124,9 +119,7 @@ else:
 # ==================================================
 # Load model
 # ==================================================
-with st.spinner("Loading model..."):
-    model = models_available[model_key]["loader"](device=device)
-
+model = models_available[model_key]["loader"](device=device)
 labels = models_available[model_key]["labels"]
 
 # ==================================================
@@ -140,12 +133,11 @@ with torch.no_grad():
 
 st.subheader("Prediction")
 st.success(
-    f"Prediction: **{labels[pred_idx]}** "
-    f"(confidence: {confidence:.3f})"
+    f"Prediction: **{labels[pred_idx]}** (confidence: {confidence:.3f})"
 )
 
 # ==================================================
-# Confusion case (TP / FP / FN / TN)
+# Confusion case
 # ==================================================
 filename = uploaded_file.name
 y_true = infer_ground_truth(filename, input_type)
@@ -197,16 +189,17 @@ with col2:
     st.image(lime_vis, use_container_width=True)
 
 # -------------------------
-# SHAP
+# SHAP (FIXED)
 # -------------------------
 with col3:
     st.markdown("### SHAP")
+
     background = torch.zeros_like(x).to(device)
     explainer = ShapExplainer(model, background)
     shap_values = explainer.explain(x)
 
-    # SHAP output is a list per class
-    sv = shap_values[pred_idx][0]  # (C, H, W)
+    # ✅ SAME LOGIC AS PAGE 1
+    sv = shap_values[0][0]      # (C, H, W)
     heatmap = shap_to_heatmap(sv, target_size=image.size)
     overlay = overlay_shap(image, heatmap)
 
